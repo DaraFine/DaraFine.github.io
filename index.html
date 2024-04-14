@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Игра Мориарти</title>
+    <style>
+        #a{background-image: url('C:/Users/HP/Desktop/tiiis.png');
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-style: italic;
+        color:beige;
+    }
+    </style>
+
+
+    <script>
+
+        async function GetMessages() {
+            let response = await fetch("https://chat.vu.profcomff.com/message")
+            console.log(response);
+            let response1 = await response.json();
+            console.log(response1.messages)
+
+            function drawMessage(message) {
+                
+                function onlyLetters(inputString) {   
+                    return /^[a-zA-Zа-яА-Я]+$/.test(inputString);  
+                }
+                if (onlyLetters(message.text)) {  
+                    let message_list = document.getElementById("message_list")  
+                    let li = document.createElement('li');  
+                    li.setAttribute('class','message');  
+                    li.innerText = message.author + " " + message.text;  
+                    message_list.appendChild(li);  
+                }
+            }
+           
+            
+
+            let message_list = document.getElementById("message_list")
+            message_list.innerHTML = '';
+            response1.messages.forEach(drawMessage);
+        }
+
+        async function SendMessages() {
+            let nameElement = document.getElementById("name");
+            let name = nameElement.value;
+            let surnameElement = document.getElementById("surname");
+            let surname = surnameElement.value;
+            let groupElement = document.getElementById("group");
+            let group = groupElement.value;
+
+            FIO = name + " " + surname
+            let response = await fetch(
+                "https://chat.vu.profcomff.com/message",
+                {
+                    method: "POST",
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        "author": FIO,
+                        "text": group
+                    })
+                }
+            )
+            console.log(response);
+            GetMessages()
+        }
+
+
+        
+    </script>
+</head>
+
+<body id="a">
+    <h1>Игра Мориарти</h1>
+    <p>
+        Игры Мориарти - спортивное мероприятие 
+        для участников ПрофУчёбы 2024. 
+    </p>
+    <p>Позволяет участникам размяться после насыщенных учебных дней и получить заряд бодрости для дальнейших свершений!</p>
+    <div class="chat">
+        
+        <form>
+           <p> <input id="name" type="name" placeholder="Имя" /> </p>
+           <p> <input id="surname" type="text" placeholder="Фамилия" /> </p>
+           <p> <input id="group" type="text" placeholder="Направление" /> </p>
+           <p> <input id="send" type="button" value="Отправить" onclick="SendMessages()"/> </p>
+
+        </form>
+        
+        
+    </div>
+    <ul id="message_list">
+        <li class="message"></li>
+    </ul>
+</body>
+
+</html>
